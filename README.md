@@ -1,5 +1,10 @@
 # LastFm - block based Last.fm SDK for iOS and Mac OS X
 
+This is fork of https://github.com/gangverk/LastFm
+I needed it becouse I needed support for Desktop Last.fm auth
+
+Original README.md contents below
+
 Loosely based on LastFMService from the [old Last.fm iPhone app](https://github.com/lastfm/lastfm-iphone/blob/master/Classes/LastFMService.m), but non-blocking, more readable, much easier to use (and to extend) and with less dependencies.
 
 ### Features
