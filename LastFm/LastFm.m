@@ -755,13 +755,49 @@
                           failureHandler:failureHandler];
 }
 
-
 - (NSOperation* )getTokenForDesktopAuthWithSuccessHandler:(LastFmReturnBlockWithDictionary)successHandler failureHandler:(LastFmReturnBlockWithError)failureHandler
 {
+    //request anonymous auth token
+    
+    NSDictionary *mappingObject = @{
+                                    @"token": @[ @"./token", @"NSString" ],
+                                    };
+    NSDictionary *params = @{};
+    
+    return [self performApiCallForMethod:@"auth.getToken"
+                                useCache:NO
+                              withParams:params
+                               rootXpath:@"."
+                        returnDictionary:YES
+                           mappingObject:mappingObject
+                          successHandler:successHandler
+                          failureHandler:failureHandler];
     
 }
-- (NSOperation* )getSessionokenForDesktopAuthWithSuccessHandler:(LastFmReturnBlockWithDictionary)successHandler failureHandler:(LastFmReturnBlockWithError)failureHandler
+- (void)askForDesktopAuthWithToken:(NSString*)token
 {
+    //open web browser so step 3 from http://www.last.fm/api/desktopauth can be performed
+    NSString * webAuthUrl=[NSString stringWithFormat:@"%@?api_key=%@&token=%@",WEB_AUTH_URL,self.apiKey,token];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:webAuthUrl]];
+}
+- (NSOperation *)getSessionWithToken:(NSString *)token  successHandler:(LastFmReturnBlockWithDictionary)successHandler failureHandler:(LastFmReturnBlockWithError)failureHandler
+{
+    NSString *authToken = [self md5sumFromString:[NSString stringWithFormat:@"%@", token]];
+    
+    NSDictionary *mappingObject = @{
+                                    @"name": @[ @"./name", @"NSString" ],
+                                    @"key": @[ @"./key", @"NSString" ],
+                                    @"subscriber": @[ @"./subscriber", @"NSNumber" ]
+                                    };
+    
+    return [self performApiCallForMethod:@"auth.getSession"
+                                useCache:NO
+                              withParams:@{ @"token": token, @"authToken": authToken }
+                               rootXpath:@"./session"
+                        returnDictionary:YES
+                           mappingObject:mappingObject
+                          successHandler:successHandler
+                          failureHandler:failureHandler];
     
 }
 
